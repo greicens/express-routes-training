@@ -5,6 +5,7 @@ var express = require('express');
 var app = express();
 
 
+
 // MIDDLEWARE
 app.use(express.static('public'));
 
@@ -22,15 +23,56 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // ROUTES
 // Root Route
-
+app.get('/', function(request, response){
+  response.sendFile('views/index.html', {root: __dirname});
+})
 
 // Gallery View Route
 
 
 // The Number Guessing Game
 
+var targetNum = 50;
+
+app.get('/pick-a-number', function(request, response){
+  console.log(request.query);
+  var number = parseInt(request.query.number);
+  if(number === targetNum){
+    response.send('Nailed it!');
+  }else if (number > targetNum){
+    response.send('Too High!');
+  }else if(number < targetNum){
+    response.send('Too Low');
+  }else{
+    response.send('Your guess could not be compared.')
+  }
+
+});
+
+app.post('pick-a-number', function(request, response){
+  targetNum = parseInt(request.body.number);
+  response.status(200).send('Number updated succesfully');
+});
+
 
 // Gallery
+var artworks = [];
+
+app.get('art-gallery', function(request, response){
+  response.json([]);
+
+});
+
+app.post('/artworks', function(request, response){
+  var newArtwork = {
+    title: request.body.title,
+    artist: request.body.artist
+    description: request.body.description,
+  };
+  artworks.push(newArtwork);
+  response.json(artworks);
+});
+
 
 
 // SERVER START
